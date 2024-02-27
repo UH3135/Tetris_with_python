@@ -28,19 +28,25 @@ class block():
         self.xpos = START_POS[0]
         self.ypos = START_POS[1]
 
+        #블럭 모양과 색상을 랜덤으로 설정
         self.shape = shapes[random.randint(0, 6)]
         self.color = colors[random.randint(0, 6)]
 
-    def get_pos(self):
+    def get_pos(self): # 좌표를 캡슐화 해서 접근 하도록
         result = []
         for x, y in self.shape:
             result.append([x * block_size + self.xpos, y * block_size + self.ypos])
 
         return result
 
+    def move_pos(self, direct): # direct가 0이면 왼쪽으로 1이면 오른쪽으로 이동
+        if direct == 0:
+            self.xpos -= block_size
+        else:
+            self.xpos += block_size
 
-    def move_pos(self):
-        self.ypos += block_size // 2
+    def down_pos(self):
+        self.ypos += block_size // 10
 
 
 if __name__ == "__main__":

@@ -23,16 +23,23 @@ while True: # 게임 메인 로직
         is_block_alive = True
 
     for event in pygame.event.get(): # 발생한 입력 event 목록의 event마다 검사
-        if event.type == QUIT: # event의 type이 QUIT에 해당할 경우
+        if event.type == pygame.QUIT: # event의 type이 QUIT에 해당할 경우
             pygame.quit() # pygame을 종료한다
             sys.exit() # 창을 닫는다
+
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                new_block.move_pos(1)
+            elif event.key == pygame.K_LEFT:
+                new_block.move_pos(0)
+                
 
     display.fill(white) # displaysurf를 하얀색으로 채운다
 
     if is_block_alive:
         for x, y in new_block.get_pos():
             pygame.draw.rect(display, new_block.color, [x, y, block_size, block_size])
-        new_block.move_pos()
+        new_block.down_pos()
         if new_block.ypos >= height:
             is_block_alive = False
 
