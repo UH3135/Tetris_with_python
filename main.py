@@ -28,9 +28,12 @@ while True: # 게임 메인 로직
             sys.exit() # 창을 닫는다
 
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
+            positions = new_block.get_pos() # 만약 블럭이 화면을 넘어가면 행동 처리
+            x_positions = [x[0] for x in positions]
+
+            if event.key == pygame.K_RIGHT and max(x_positions) + block_size < width:
                 new_block.move_pos(1)
-            elif event.key == pygame.K_LEFT:
+            elif event.key == pygame.K_LEFT and min(x_positions) - block_size >= 0:
                 new_block.move_pos(0)
                 
 

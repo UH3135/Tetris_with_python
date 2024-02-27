@@ -53,7 +53,3 @@ if __name__ == "__main__":
     new = block()
     print(new.shape)
     print(new.get_pos())
-
-
-
-
