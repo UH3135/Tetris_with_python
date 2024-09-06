@@ -1,56 +1,55 @@
-import pygame # pygame 모듈의 임포트
-import sys # 외장 모듈
-from pygame.locals import * # QUIT 등의 pygame 상수들을 로드한다.
-from block import block_size, block
+import random
 
-width = block_size * 10 # 상수 설정
-height = width * 2
-white = (255, 255, 255)
-black = (0, 0, 0)
-fps = 30
+block_size = 20
+START_POS = [0, 0] # 블럭 시작 좌표
+shapes = ( # 테트리미노 모양
+    ((0, 0), (0, 1), (0, 2), (0, 3)),
+    ((0, 2), (1, 0), (1, 1), (1, 2)),
+    ((0, 0), (0, 1), (0, 2), (1, 2)),
+    ((0, 0), (0, 1), (1, 0), (1, 1)),
+    ((0, 1), (1, 0), (1, 1), (2, 0)),
+    ((0, 0), (1, 0), (1, 1), (2, 0)),
+    ((0, 0), (1, 0), (1, 1), (2, 1))
+)
+colors = [
+    (0, 0, 241), # Blue
+    (2, 241, 241), # Sky
+    (240, 162, 0), # Orange
+    (240, 240, 1), # Yellow
+    (2, 241, 0), # Green
+    (162, 0, 241), # Purple
+    (241, 1, 1) # red
 
-pygame.init() # 초기화
+]
 
-pygame.display.set_caption('Tetris Beta') # 창 제목 설정
-display = pygame.display.set_mode((width, height), 0, 32) # 메인 디스플레이를 설정한다
-clock = pygame.time.Clock() # 시간 설정
+class block():
+    def __init__(self):
+        # 블럭 top 좌표
+        self.xpos = START_POS[0]
+        self.ypos = START_POS[1]
 
-is_block_alive = False
+        #블럭 모양과 색상을 랜덤으로 설정
+        self.shape = shapes[random.randint(0, 6)]
+        self.color = colors[random.randint(0, 6)]
 
-while True: # 게임 메인 로직
-    if not is_block_alive:
-        new_block = block()
-        is_block_alive = True
+    def get_pos(self): # 좌표를 캡슐화 해서 접근 하도록
+        result = []
+        for x, y in self.shape:
+            result.append([x * block_size + self.xpos, y * block_size + self.ypos])
 
-    for event in pygame.event.get(): # 발생한 입력 event 목록의 event마다 검사
-        if event.type == pygame.QUIT: # event의 type이 QUIT에 해당할 경우
-            pygame.quit() # pygame을 종료한다
-            sys.exit() # 창을 닫는다
+        return result
 
-        elif event.type == pygame.KEYDOWN:
-            positions = new_block.get_pos() # 만약 블럭이 화면을 넘어가면 행동 처리
-            x_positions = [x[0] for x in positions]
+    def move_pos(self, direct): # direct가 0이면 왼쪽으로 1이면 오른쪽으로 이동
+        if direct == 0:
+            self.xpos -= block_size
+        else:
+            self.xpos += block_size
 
-            if event.key == pygame.K_RIGHT and max(x_positions) + block_size < width:
-                new_block.move_pos(1)
-            elif event.key == pygame.K_LEFT and min(x_positions) - block_size >= 0:
-                new_block.move_pos(0)
-                
+    def down_pos(self):
+        self.ypos += block_size // 10
 
-    display.fill(white) # displaysurf를 하얀색으로 채운다
 
-    if is_block_alive:
-        for x, y in new_block.get_pos():
-            pygame.draw.rect(display, new_block.color, [x, y, block_size, block_size])
-        new_block.down_pos()
-        if new_block.ypos >= height:
-            is_block_alive = False
-
-    # 격자무늬 만들기
-    for x in range(block_size, width, block_size):  # 세로줄 긋기
-        pygame.draw.line(display, black, (x, 0), (x, 400))
-    for y in range(block_size, height, block_size):  # 가로줄 긋기
-        pygame.draw.line(display, black, (0, y), (400, y))
-
-    pygame.display.update() # 화면을 업데이트한다
-    clock.tick(fps) # 화면 표시 회수 설정만큼 루프의 간격을 둔다
+if __name__ == "__main__":
+    new = block()
+    print(new.shape)
+    print(new.get_pos())
